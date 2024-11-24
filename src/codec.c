@@ -881,14 +881,14 @@ codec_posit_log8_from_s_and_l(bool s, float l)
 }
 
 posit_log16
-codec_posit_log16_from_s_and_l(bool s, float l)
+codec_posit_log16_from_s_and_l(bool s, double l)
 {
 	uint8_t p;
 	uint16_t RR0bE;
-	uint32_t M;
+	uint64_t M;
 	int_fast16_t c;
-	float cpm, m;
-	const float bound = 56.0f;
+	double cpm, m;
+	const double bound = 56.0f;
 
 	if (isnan(l) || (isinf(l) && l > 0)) {
 		return POSIT_LOG16_NAR;
@@ -906,11 +906,11 @@ codec_posit_log16_from_s_and_l(bool s, float l)
 	cpm = (1 - 2 * s) * l;
 
 	/* Obtain c and m from cpm */
-	c = floorf(cpm);
+	c = floor(cpm);
 	m = cpm - c;
 
 	/* m could have overflowed to 1.0 */
-	if (m == 1.0f) {
+	if (m == 1.0) {
 		c += 1;
 		m = 0.0;
 	}
@@ -919,7 +919,7 @@ codec_posit_log16_from_s_and_l(bool s, float l)
 	RR0bE = (uint16_t)get_RR0bE_and_k_from_c(c, 16, (long double)m, &p);
 
 	/* Determine mantissa bits */
-	M = float32_fraction_to_rounded_bits(m, p);
+	M = float64_fraction_to_rounded_bits(m, p);
 
 	/*
 	 * Assemble, optionally apply the carry to SDR which is guaranteed
@@ -929,14 +929,14 @@ codec_posit_log16_from_s_and_l(bool s, float l)
 }
 
 posit_log32
-codec_posit_log32_from_s_and_l(bool s, double l)
+codec_posit_log32_from_s_and_l(bool s, long double l)
 {
 	uint8_t p;
 	uint32_t RR0bE;
 	uint64_t M;
 	int_fast16_t c;
-	double cpm, m;
-	const double bound = 120.0;
+	long double cpm, m;
+	const long double bound = 120.0L;
 
 	if (isnan(l) || (isinf(l) && l > 0)) {
 		return POSIT_LOG32_NAR;
@@ -954,20 +954,20 @@ codec_posit_log32_from_s_and_l(bool s, double l)
 	cpm = (1 - 2 * s) * l;
 
 	/* Obtain c and m from cpm */
-	c = floor(cpm);
+	c = floorl(cpm);
 	m = cpm - c;
 
 	/* m could have overflowed to 1.0 */
-	if (m == 1.0) {
+	if (m == 1.0L) {
 		c += 1;
-		m = 0.0;
+		m = 0.0L;
 	}
 
 	/* get RR0bE */
-	RR0bE = (uint32_t)get_RR0bE_and_k_from_c(c, 32, (long double)m, &p);
+	RR0bE = (uint32_t)get_RR0bE_and_k_from_c(c, 32, m, &p);
 
 	/* Determine mantissa bits */
-	M = float64_fraction_to_rounded_bits(m, p);
+	M = extended_float_fraction_to_rounded_bits(m, p);
 
 	/*
 	 * Assemble, optionally apply the carry to SDR which is guaranteed

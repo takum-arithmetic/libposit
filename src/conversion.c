@@ -187,14 +187,14 @@ posit16
 posit16_from_float64(double f)
 {
 	return (posit16)codec_posit_log16_from_s_and_l(
-		f < 0, (float)codec_linear_l_from_float64(f));
+		f < 0, (double)codec_linear_l_from_float64(f));
 }
 
 posit32
 posit32_from_float64(double f)
 {
 	return (posit32)codec_posit_log32_from_s_and_l(
-		f < 0, (double)codec_linear_l_from_float64(f));
+		f < 0, (long double)codec_linear_l_from_float64(f));
 }
 
 posit64
@@ -267,14 +267,14 @@ posit16
 posit16_from_extended_float(long double f)
 {
 	return (posit16)codec_posit_log16_from_s_and_l(
-		f < 0, (float)codec_linear_l_from_extended_float(f));
+		f < 0, (double)codec_linear_l_from_extended_float(f));
 }
 
 posit32
 posit32_from_extended_float(long double f)
 {
 	return (posit32)codec_posit_log32_from_s_and_l(
-		f < 0, (double)codec_linear_l_from_extended_float(f));
+		f < 0, codec_linear_l_from_extended_float(f));
 }
 
 posit64
