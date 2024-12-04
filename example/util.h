@@ -5,8 +5,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "../posit.h"
-
 #undef LEN
 #define LEN(x) (sizeof(x) / sizeof(*(x)))
 
