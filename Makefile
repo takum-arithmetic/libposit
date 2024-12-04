@@ -62,6 +62,7 @@ SRC =\
 	src/subtraction\
 	src/tan\
 	src/tanh\
+	src/util\
 
 TEST =\
 	test/10_raised\
@@ -766,6 +767,7 @@ src/lg.o: src/lg.c Makefile config.mk posit.h src/util.h
 src/ln.o: src/ln.c Makefile config.mk posit.h src/util.h
 src/multiplication.o: src/multiplication.c Makefile config.mk posit.h src/util.h
 src/power.o: src/power.c Makefile config.mk posit.h src/util.h
+src/precision.o: src/precision.c Makefile config.mk posit.h src/util.h
 src/sec.o: src/sec.c Makefile config.mk posit.h src/util.h
 src/sech.o: src/sech.c Makefile config.mk posit.h src/util.h
 src/sin.o: src/sin.c Makefile config.mk posit.h src/util.h
@@ -823,6 +825,8 @@ test/subtraction.o: test/subtraction.c Makefile config.mk posit.h test/util.h
 test/tan.o: test/tan.c Makefile config.mk posit.h test/util.h
 test/tanh.o: test/tanh.c Makefile config.mk posit.h test/util.h
 test/util.o: test/util.c Makefile config.mk posit.h test/util.h
+
+$(ANAME) $(SONAME): $(SRC:=.o)
 
 example/calculator$(BINSUFFIX): example/calculator.o example/util.o $(ANAME)
 test/10_raised$(BINSUFFIX): test/10_raised.o test/util.o $(ANAME)
@@ -1215,7 +1219,7 @@ man/libposit.7: man/libposit.sh Makefile config.mk
 $(EXAMPLE:=.o) example/util.o $(TEST:=.o) test/util.o:
 	$(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $(@:.o=.c)
 
-$(SRC:=.o) src/util.o:
+$(SRC:=.o):
 	$(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $(SHFLAGS) $(@:.o=.c)
 
 $(EXAMPLE:=$(BINSUFFIX)):
@@ -1227,12 +1231,12 @@ $(TEST:=$(BINSUFFIX)):
 $(TEST:=.success):
 	./$(@:.success=$(BINSUFFIX)) && touch $@
 
-$(ANAME): $(SRC:=.o) src/util.o
+$(ANAME): $(SRC:=.o)
 	$(AR) -rc $@ $?
 	$(RANLIB) $@
 
-$(SONAME): $(SRC:=.o) src/util.o
-	$(CC) -o $@ $(SOFLAGS) $(LDFLAGS) $(SRC:=.o) src/util.o $(LDLIBS)
+$(SONAME): $(SRC:=.o)
+	$(CC) -o $@ $(SOFLAGS) $(LDFLAGS) $(SRC:=.o) $(LDLIBS)
 
 $(MAN3:=.3):
 	env -i SH="$(SH)" MAN_DATE="$(MAN_DATE)" $(SH) $(@:.3=.sh) > $@
@@ -1279,7 +1283,7 @@ uninstall:
 	if ! [ -z "$(PCPREFIX)" ]; then rm -f "$(DESTDIR)$(PCPREFIX)/libposit.pc"; fi
 
 clean:
-	rm -f $(EXAMPLE:=.o) example/util.o $(EXAMPLE:=$(BINSUFFIX)) $(SRC:=.o) src/util.o $(TEST:=.o) test/util.o $(TEST:=$(BINSUFFIX)) $(TEST:=.success) $(ANAME) $(SONAME) $(MAN3:=.3) $(MAN7:=.7)
+	rm -f $(EXAMPLE:=.o) example/util.o $(EXAMPLE:=$(BINSUFFIX)) $(SRC:=.o) $(TEST:=.o) test/util.o $(TEST:=$(BINSUFFIX)) $(TEST:=.success) $(ANAME) $(SONAME) $(MAN3:=.3) $(MAN7:=.7)
 
 dist:
 	rm -rf "libposit-$(VERSION)"
@@ -1290,12 +1294,12 @@ dist:
 	cp $(EXAMPLE:=.c) example/util.c example/util.h "libposit-$(VERSION)/example"
 	cp $(MAN3:=.sh) $(MAN7:=.sh) "libposit-$(VERSION)/man"
 	cp $(MAN_TEMPLATE) "libposit-$(VERSION)/man/template"
-	cp $(SRC:=.c) src/util.h "libposit-$(VERSION)/src"
+	cp $(SRC:=.c) src/codec.h src/util.h "libposit-$(VERSION)/src"
 	cp $(TEST:=.c) test/util.c test/util.h "libposit-$(VERSION)/test"
 	tar -cf - "libposit-$(VERSION)" | gzip -c > "libposit-$(VERSION).tar.gz"
 	rm -rf "libposit-$(VERSION)"
 
 format:
-	clang-format -i posit.h $(EXAMPLE:=.c) example/util.c example/util.h $(SRC:=.c) src/util.c src/util.h $(TEST:=.c) test/util.c test/util.h
+	clang-format -i posit.h $(EXAMPLE:=.c) example/util.c example/util.h $(SRC:=.c) src/codec.h src/util.h $(TEST:=.c) test/util.c test/util.h
 
 .PHONY: all check clean dist example format install test uninstall
