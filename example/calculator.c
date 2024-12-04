@@ -1602,7 +1602,7 @@ process_token(const char *token, struct stack *stack,
 				}
 				printf("%s", operators[j].identifier);
 			}
-			printf("\n");
+			printf("\n\nPress Ctrl+D to exit.\n");
 
 			/* return 1 to abort further line processing */
 			return 1;
