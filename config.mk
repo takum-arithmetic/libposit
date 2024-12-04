@@ -1,4 +1,4 @@
-# Customize below to fit your system (run ./configure for automatic presets)
+# Customise below to fit your system (run ./configure for automatic presets)
 
 # paths (unset $PCPREFIX to not install a pkg-config-file)
 DESTDIR   =
