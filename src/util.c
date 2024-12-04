@@ -72,7 +72,7 @@ GENERATE_UTIL_ROUND_UINTN_TO_NUMBER_OF_BITS(64)
 
 /* check if the compiler has clz */
 #ifndef __has_builtin
-	#define __has_builtin(x) (false)
+#define __has_builtin(x) (false)
 #endif
 
 #if __has_builtin(__builtin_clz)
